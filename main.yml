@@ -1,0 +1,41 @@
+- hosts: pi
+  sudo: true
+  vars:
+    cache_timeout: 10800    # 3 hours
+  tasks:
+    - name: "Upgrade pi and cache"
+      apt:
+        upgrade: "full"
+        update_cache: true
+        cache_valid_time: "{{ cache_timeout }}"
+
+    - name: "Upgrade pi dist"
+      apt:
+        upgrade: "dist"
+        update_cache: true
+        cache_valid_time: "{{ cache_timeout }}"
+
+    - name: "Install deps"
+      apt:
+        name: "{{ item }}"
+        force: true
+      with_items:
+        - "apt-transport-https"
+
+    - name: "Add plex media server key"
+      apt_key:
+        url: "https://dev2day.de/pms/dev2day-pms.gpg.key"
+        state: "present"
+
+    - name: "Add plex media server repo"
+      apt_repository:
+        repo: "deb https://dev2day.de/pms/ jessie main"
+
+    - name: "Update apt cache"
+      apt:
+        update_cache: yes
+
+    - name: "Install plex media server"
+      apt:
+        default_release: "jessie"
+        name: "plexmediaserver-install"
