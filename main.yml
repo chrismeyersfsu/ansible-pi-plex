@@ -38,4 +38,4 @@
     - name: "Install plex media server"
       apt:
         default_release: "jessie"
-        name: "plexmediaserver-install"
+        name: "plexmediaserver-installer"
