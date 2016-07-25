@@ -1,0 +1,8 @@
+---
+plexmediaserver_base_dir: "/Media/plex"
+plexmediaserver_transcode_dir: "{{ plexmediaserver_base_dir }}/transcode"
+plexmediaserver_metadata_dir: "{{ plexmediaserver_base_dir }}/library"
+plexmediaserver_dirs:
+  - "{{ plexmediaserver_base_dir }}"
+  - "{{ plexmediaserver_transcode_dir }}"
+  - "{{ plexmediaserver_metadata_dir }}"

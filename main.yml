@@ -26,16 +26,43 @@
       apt_key:
         url: "https://dev2day.de/pms/dev2day-pms.gpg.key"
         state: "present"
+      register: apt_key_result
 
     - name: "Add plex media server repo"
       apt_repository:
         repo: "deb https://dev2day.de/pms/ jessie main"
+      register: apt_repository_result
 
     - name: "Update apt cache"
       apt:
         update_cache: yes
+      when: "apt_key_result.changed == true or apt_repository_result.changed == true"
 
     - name: "Install plex media server"
       apt:
         default_release: "jessie"
         name: "plexmediaserver-installer"
+
+    - name: "include plex vars"
+      include_vars: "plex-vars.yml"
+
+    - name: "Make directories for plex"
+      file:
+        path: "{{ item }}"
+        state: "directory"
+        owner: "plex"
+        group: "nogroup"
+        mode: "0777"
+      with_items: "{{ plexmediaserver_dirs }}"
+
+    - name: "Lay down plex config"
+      template:
+        src: "templates/plexmediaserver.j2"
+        dest: "/etc/default/plexmediaserver"
+
+    # TODO: make this a handler
+    - name: "Restart plex service"
+      service:
+        name: "plexmediaserver"
+        state: "restarted"
+
